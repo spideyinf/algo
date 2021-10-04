@@ -12,9 +12,9 @@ let myLinkedList = {
 }
 
 class Node {
-  constructor(value) {
+  constructor(value, next = null) {
     this.value = value;
-    this.next = null
+    this.next = next
   }
 }
 
@@ -55,8 +55,43 @@ class LinkedList {
     return array.join(' --> ')
   }
 
-  insert(index, value) {
+  traverseToIndex(index) {
+    let counter = 0;
+    let currentNode = this.head;
+    while (counter !== index) {
+      currentNode = currentNode.next;
+      counter++;
+    }
+    return currentNode
+  }
 
+  insert(index, value) {
+    if (index >= this.length) {
+      this.append(value);
+      return this.printList();
+    }
+    const newNode = new Node(value);
+    const leader = this.traverseToIndex(index - 1);
+    const holder = leader.next;
+    leader.next = newNode;
+    newNode.next = holder;
+    this.length++;
+    return this.printList();
+  }
+
+  remove(index) {
+    if (index >= this.length) {
+      const leader = this.traverseToIndex(this.length - 1);
+      leader.next = null;
+      this.tail = leader;
+      this.length--;
+      return this.printList();
+    }
+    const leader = this.traverseToIndex(index - 1);
+    const toRemoveNode = leader.next;
+    leader.next = toRemoveNode.next;
+    this.length--;
+    return this.printList();
   }
 }
 
@@ -65,4 +100,35 @@ linkedList.append(20)
 linkedList.append(30)
 linkedList.prepend(0)
 linkedList.printList()
+linkedList.insert(2, 15)
+linkedList.insert(22, 115)
+linkedList.remove(22)
 console.log('linkedList :', linkedList);
+
+class DoubleLinkedList {
+  constructor(value) {
+    this.head = {
+      value,
+      next: null,
+      prev: null
+    }
+    this.tail = this.head;
+    this.length = 1
+  }
+
+  append(value) {
+    const newNode = new Node(value);
+    this.tail.next = newNode;
+    this.tail = newNode;
+    this.length++;
+    return this
+  }
+
+  prepend(value) {
+    const newNode = new Node(value);
+    newNode.next = this.head;
+    this.head = newNode;
+    this.length++;
+    return this
+  }
+}
